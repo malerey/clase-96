@@ -1,26 +1,39 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { useState, useEffect } from 'react';
 
-function App() {
+const App = () => {
+  const [pokemon, setPokemon] = useState({});
+  const [busqueda, setBusqueda] = useState('pikachu');
+
+  const handleChange = e => {
+    setBusqueda(e.target.value);
+  };
+
+  useEffect(() => {
+    console.log('se ejecuta useeffect');
+    fetch(`https://pokeapi.co/api/v2/pokemon/${busqueda}`)
+      .then(res => res.json())
+      .then(data => setPokemon(data));
+  }, [busqueda]);
+
+  console.log(pokemon);
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div className="main">
+      <div className="card">
+        {pokemon && pokemon.name && (
+          <>
+            <img alt={pokemon.name} src={pokemon.sprites.front_default} />
+            <p>Nombre: {pokemon.name}</p>
+            <p>Tipo: {pokemon.types.map(type => type.type.name)}</p>
+          </>
+        )}
+      </div>
+      <form>
+        <input value={busqueda} onChange={handleChange} />
+        <input type="submit" value="Buscar pokemon" />
+      </form>
     </div>
   );
-}
+};
 
 export default App;
